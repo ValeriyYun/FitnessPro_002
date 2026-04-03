@@ -1,1 +1,908 @@
 # FitnessPro_002
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фитнес Тренер • Твоя программа</title>
+    <style>
+        :root {
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --color-background-primary: #ffffff;
+            --color-background-secondary: #f8f9fa;
+            --color-background-tertiary: #f1f3f5;
+            --color-text-primary: #212529;
+            --color-text-secondary: #6c757d;
+            --color-text-tertiary: #adb5bd;
+            --color-border-tertiary: #dee2e6;
+            --color-border-secondary: #e9ecef;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: var(--font-sans); 
+            background: var(--color-background-tertiary); 
+            color: var(--color-text-primary); 
+            line-height: 1.5;
+        }
+        .app { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 1rem; 
+        }
+        .tabs { 
+            display: flex; 
+            gap: 4px; 
+            background: var(--color-background-secondary); 
+            border-radius: var(--border-radius-lg); 
+            padding: 4px; 
+            margin-bottom: 1.5rem; 
+        }
+        .tab { 
+            flex: 1; 
+            padding: 12px 16px; 
+            border: none; 
+            background: transparent; 
+            border-radius: var(--border-radius-md); 
+            font-size: 14px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            color: var(--color-text-secondary); 
+            transition: all 0.2s; 
+        }
+        .tab.active { 
+            background: var(--color-background-primary); 
+            color: var(--color-text-primary); 
+            border: 1px solid var(--color-border-tertiary); 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .section { display: none; }
+        .section.active { display: block; }
+        .card { 
+            background: var(--color-background-primary); 
+            border: 1px solid var(--color-border-tertiary); 
+            border-radius: var(--border-radius-lg); 
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .card-title { 
+            font-size: 17px; 
+            font-weight: 600; 
+            margin-bottom: 1.25rem; 
+            color: var(--color-text-primary);
+        }
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 16px; 
+        }
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
+        }
+        .form-group label { 
+            font-size: 13px; 
+            font-weight: 500; 
+            color: var(--color-text-secondary); 
+        }
+        .form-group input, .form-group select { 
+            border: 1px solid var(--color-border-secondary); 
+            border-radius: var(--border-radius-md); 
+            padding: 10px 14px; 
+            font-size: 15px; 
+            background: var(--color-background-primary); 
+            color: var(--color-text-primary); 
+            outline: none; 
+            transition: border 0.2s;
+        }
+        .form-group input:focus { 
+            border-color: #378ADD; 
+            box-shadow: 0 0 0 3px rgba(55,138,221,0.15); 
+        }
+        .hint { 
+            font-size: 12px; 
+            color: var(--color-text-tertiary); 
+        }
+        .btn-primary { 
+            background: #378ADD; 
+            color: white; 
+            border: none; 
+            border-radius: var(--border-radius-md); 
+            padding: 14px 24px; 
+            font-size: 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 16px; 
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: #185FA5; }
+        .btn-sm { 
+            font-size: 13px; 
+            padding: 6px 12px; 
+            border-radius: var(--border-radius-md); 
+            border: 1px solid var(--color-border-secondary); 
+            background: transparent; 
+            cursor: pointer; 
+            color: var(--color-text-secondary); 
+        }
+        .btn-sm:hover { background: var(--color-background-secondary); }
+        .error-msg { 
+            background: #FCEBEB; 
+            border: 1px solid #F09595; 
+            color: #A32D2D; 
+            border-radius: var(--border-radius-md); 
+            padding: 12px 16px; 
+            font-size: 14px; 
+            margin-top: 12px; 
+            display: none; 
+        }
+        .week-nav { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            margin-bottom: 1rem; 
+        }
+        .week-nav button { 
+            border: 1px solid var(--color-border-secondary); 
+            background: transparent; 
+            border-radius: var(--border-radius-md); 
+            padding: 8px 14px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            color: var(--color-text-secondary); 
+        }
+        .week-nav span { 
+            font-size: 15px; 
+            font-weight: 600; 
+            flex: 1; 
+            text-align: center; 
+        }
+        .workout-day { 
+            background: var(--color-background-primary); 
+            border: 1px solid var(--color-border-tertiary); 
+            border-radius: var(--border-radius-lg); 
+            margin-bottom: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .day-header { 
+            padding: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            cursor: pointer; 
+        }
+        .day-label { 
+            font-size: 15px; 
+            font-weight: 600; 
+            flex: 1; 
+        }
+        .day-muscle { 
+            font-size: 13px; 
+            color: var(--color-text-secondary); 
+        }
+        .day-done { 
+            font-size: 13px; 
+            color: #1D9E75; 
+            font-weight: 600; 
+        }
+        .day-body { 
+            padding: 0 16px 20px; 
+            display: none; 
+        }
+        .day-body.open { display: block; }
+        .exercise-item { 
+            border: 1px solid var(--color-border-tertiary); 
+            border-radius: var(--border-radius-md); 
+            padding: 14px; 
+            margin-bottom: 10px; 
+        }
+        .ex-top { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            margin-bottom: 8px; 
+        }
+        .ex-name { 
+            font-size: 15px; 
+            font-weight: 600; 
+            flex: 1; 
+        }
+        .ex-sets { 
+            font-size: 13px; 
+            color: var(--color-text-secondary); 
+            white-space: nowrap; 
+        }
+        .ex-actions { 
+            display: flex; 
+            gap: 8px; 
+            align-items: center; 
+        }
+        .ex-done-check { 
+            width: 22px; 
+            height: 22px; 
+            border-radius: 6px; 
+            border: 2px solid var(--color-border-secondary); 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
+            font-size: 13px; 
+        }
+        .ex-done-check.checked { 
+            background: #1D9E75; 
+            border-color: #1D9E75; 
+            color: white; 
+        }
+        .instruction-panel { 
+            display: none; 
+            background: var(--color-background-secondary); 
+            border-radius: var(--border-radius-md); 
+            padding: 14px; 
+            margin-top: 10px; 
+            font-size: 14px; 
+            line-height: 1.6; 
+        }
+        .instruction-panel.open { display: block; }
+        .yt-link { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            color: #D85A30; 
+            font-size: 13px; 
+            text-decoration: none; 
+            margin-top: 10px; 
+            font-weight: 500; 
+        }
+        .rest-day { 
+            color: var(--color-text-tertiary); 
+            font-size: 14px; 
+            padding: 10px 0; 
+        }
+        .stat-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 16px; 
+            margin-bottom: 1.5rem; 
+        }
+        .stat-card { 
+            background: var(--color-background-secondary); 
+            border-radius: var(--border-radius-md); 
+            padding: 1.25rem; 
+            text-align: center; 
+        }
+        .stat-num { 
+            font-size: 32px; 
+            font-weight: 700; 
+        }
+        .stat-lbl { 
+            font-size: 13px; 
+            color: var(--color-text-secondary); 
+            margin-top: 6px; 
+        }
+        .cal-grid { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 6px; 
+        }
+        .cal-day { 
+            aspect-ratio: 1; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 13px; 
+            font-weight: 500; 
+            border: 1px solid var(--color-border-tertiary); 
+        }
+        .cal-day.workout { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; }
+        .cal-day.done { background: #1D9E75; color: white; border-color: #1D9E75; }
+        .cal-day.rest { color: var(--color-text-tertiary); background: transparent; }
+        .cal-day.today { border: 2px solid #378ADD; }
+        .progress-bar-wrap { 
+            height: 10px; 
+            background: var(--color-background-secondary); 
+            border-radius: 9999px; 
+            margin: 12px 0; 
+            overflow: hidden; 
+        }
+        .progress-bar { 
+            height: 100%; 
+            background: #1D9E75; 
+            border-radius: 9999px; 
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .meal-card { 
+            background: var(--color-background-primary); 
+            border: 1px solid var(--color-border-tertiary); 
+            border-radius: var(--border-radius-lg); 
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem; 
+        }
+        .meal-title { 
+            font-size: 15px; 
+            font-weight: 600; 
+            margin-bottom: 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .meal-time { 
+            font-size: 13px; 
+            color: var(--color-text-secondary); 
+            font-weight: 400; 
+        }
+        .meal-kcal { 
+            font-size: 13px; 
+            color: var(--color-text-tertiary); 
+            margin-left: auto; 
+        }
+        .ingredient-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            padding: 10px 0; 
+            border-bottom: 1px solid var(--color-border-tertiary); 
+        }
+        .ingredient-row:last-child { border-bottom: none; }
+        .ing-name { font-size: 14px; flex: 1; }
+        .ing-amount { font-size: 13px; color: var(--color-text-secondary); }
+        .ing-swap { 
+            font-size: 12px; 
+            padding: 4px 12px; 
+            border-radius: 9999px; 
+            border: 1px solid #378ADD; 
+            background: #E6F1FB; 
+            color: #185FA5; 
+            cursor: pointer; 
+            white-space: nowrap; 
+        }
+        .swap-panel { 
+            display: none; 
+            background: var(--color-background-secondary); 
+            border-radius: var(--border-radius-md); 
+            padding: 8px; 
+            margin: 8px 0; 
+        }
+        .swap-panel.open { display: block; }
+        .swap-option { 
+            padding: 8px 12px; 
+            font-size: 14px; 
+            cursor: pointer; 
+            border-radius: var(--border-radius-md); 
+            display: flex; 
+            justify-content: space-between; 
+        }
+        .swap-option:hover { background: var(--color-background-primary); }
+        .macros-row { 
+            display: flex; 
+            gap: 16px; 
+            margin-top: 16px; 
+        }
+        .macro { text-align: center; flex: 1; }
+        .macro-val { font-size: 18px; font-weight: 700; }
+        .macro-lbl { font-size: 12px; color: var(--color-text-secondary); }
+        .day-kcal-total { 
+            text-align: center; 
+            font-size: 14px; 
+            color: var(--color-text-secondary); 
+            margin: 8px 0 20px; 
+        }
+        .day-kcal-total strong { 
+            color: var(--color-text-primary); 
+            font-size: 18px; 
+        }
+        .setup-required { 
+            text-align: center; 
+            padding: 3rem 1rem; 
+            color: var(--color-text-secondary); 
+            font-size: 15px; 
+        }
+        .profile-info { 
+            display: flex; 
+            gap: 12px; 
+            flex-wrap: wrap; 
+            margin-bottom: 1rem; 
+        }
+        .profile-chip { 
+            background: var(--color-background-secondary); 
+            border-radius: var(--border-radius-md); 
+            padding: 8px 14px; 
+            font-size: 14px; 
+            font-weight: 500; 
+        }
+        .chart-bars { 
+            display: flex; 
+            align-items: flex-end; 
+            gap: 8px; 
+            height: 140px; 
+            margin-top: 16px; 
+        }
+        .bar-wrap { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 6px; 
+        }
+        .bar { 
+            width: 100%; 
+            border-radius: 6px 6px 0 0; 
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .bar-lbl { 
+            font-size: 11px; 
+            color: var(--color-text-tertiary); 
+        }
+        .reset-btn {
+            background: transparent;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('setup')">Профиль</button>
+  <button class="tab" onclick="switchTab('workout')">Тренировки</button>
+  <button class="tab" onclick="switchTab('nutrition')">Питание</button>
+  <button class="tab" onclick="switchTab('stats')">Статистика</button>
+</div>
+
+<div id="tab-setup" class="section active">
+  <div class="card">
+    <div class="card-title">Ваши данные</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Возраст</label>
+        <input type="number" id="inp-age" placeholder="25" min="14" max="80" />
+        <span class="hint">Диапазон: 14–80 лет</span>
+      </div>
+      <div class="form-group">
+        <label>Рост (см)</label>
+        <input type="number" id="inp-height" placeholder="175" min="140" max="220" />
+        <span class="hint">Диапазон: 140–220 см</span>
+      </div>
+      <div class="form-group">
+        <label>Вес (кг)</label>
+        <input type="number" id="inp-weight" placeholder="70" min="40" max="200" />
+        <span class="hint">Диапазон: 40–200 кг</span>
+      </div>
+      <div class="form-group">
+        <label>Тренировок в неделю</label>
+        <select id="inp-freq">
+          <option value="3">3 раза в неделю</option>
+          <option value="4">4 раза в неделю</option>
+          <option value="5">5 раз в неделю</option>
+          <option value="6">6 раз в неделю</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Цель</label>
+        <select id="inp-goal">
+          <option value="mass">Набор массы</option>
+          <option value="cut">Похудение</option>
+          <option value="strength">Сила и тонус</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Уровень подготовки</label>
+        <select id="inp-level">
+          <option value="beginner">Начинающий</option>
+          <option value="intermediate">Средний</option>
+          <option value="advanced">Продвинутый</option>
+        </select>
+      </div>
+    </div>
+    <div id="form-error" class="error-msg"></div>
+    <button class="btn-primary" onclick="generatePlan()">Сгенерировать программу</button>
+    <button class="reset-btn" onclick="resetAllData()">Сбросить все данные</button>
+  </div>
+</div>
+
+<div id="tab-workout" class="section">
+  <div id="workout-empty" class="setup-required">Заполните профиль, чтобы получить программу тренировок</div>
+  <div id="workout-content" style="display:none">
+    <div id="profile-display" class="card" style="padding: 1rem 1.25rem;">
+      <div class="profile-info" id="profile-chips"></div>
+    </div>
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)">←</button>
+      <span id="week-label">Неделя 1</span>
+      <button onclick="changeWeek(1)">→</button>
+    </div>
+    <div id="week-days"></div>
+  </div>
+</div>
+
+<div id="tab-nutrition" class="section">
+  <div id="nutrition-empty" class="setup-required">Заполните профиль, чтобы получить план питания</div>
+  <div id="nutrition-content" style="display:none">
+    <div id="day-kcal-summary" class="day-kcal-total"></div>
+    <div id="nutrition-meals"></div>
+  </div>
+</div>
+
+<div id="tab-stats" class="section">
+  <div id="stats-empty" class="setup-required">Заполните профиль, чтобы видеть статистику</div>
+  <div id="stats-content" style="display:none">
+    <div class="stat-grid" id="stat-cards"></div>
+    <div class="card">
+      <div class="card-title">Прогресс по неделям (выполнено тренировок)</div>
+      <div class="chart-bars" id="stat-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Выполненные тренировки — месяц</div>
+      <div class="cal-grid" id="stat-cal"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ==================== ДАННЫЕ ====================
+const EXERCISES = { /* ОСТАВЛЕН БЕЗ ИЗМЕНЕНИЙ ИЗ ВАШЕГО РЕФЕРЕНСА */ 
+  chest: [{name:'Жим штанги лёжа',sets:'4×8–10',instruction:'Лягте на скамью, возьмитесь за гриф шире плеч. Опустите штангу к груди на вдохе, выжмите вверх на выдохе. Спина слегка прогнута, лопатки сведены.',yt:'https://www.youtube.com/results?search_query=жим+штанги+лежа+техника'},{name:'Жим гантелей на наклоне',sets:'3×10–12',instruction:'Наклон скамьи 30–45°. Гантели у плеч ладонями вперёд. Выжмите вверх, сведя руки над грудью. Контролируйте опускание.',yt:'https://www.youtube.com/results?search_query=жим+гантелей+наклонная+скамья'},{name:'Разводка гантелей',sets:'3×12–15',instruction:'Лёжа на скамье, гантели над грудью. Разведите руки в стороны с лёгким сгибом в локтях до растяжения грудных, вернитесь в исходное.',yt:'https://www.youtube.com/results?search_query=разводка+гантелей+грудь+техника'},{name:'Отжимания на брусьях',sets:'3×10–15',instruction:'Держитесь за брусья, слегка наклонитесь вперёд для акцента на грудь. Опускайтесь до угла 90° в локтях, выжимайтесь вверх.',yt:'https://www.youtube.com/results?search_query=отжимания+на+брусьях+техника'}],
+  back: [{name:'Подтягивания широким хватом',sets:'4×6–10',instruction:'Возьмитесь за перекладину шире плеч. Подтянитесь, ведя локти вниз и назад. Грудь тянется к перекладине. Медленно опуститесь.',yt:'https://www.youtube.com/results?search_query=подтягивания+широкий+хват+техника'},{name:'Тяга штанги в наклоне',sets:'4×8–10',instruction:'Наклон корпуса ~45°, спина прямая. Тяните штангу к поясу, ведя локти вдоль тела. Лопатки сводите в конечной точке.',yt:'https://www.youtube.com/results?search_query=тяга+штанги+в+наклоне+техника'},{name:'Тяга верхнего блока',sets:'3×10–12',instruction:'Сядьте, зафиксируйте ноги. Возьмитесь за рукоять шире плеч. Тяните к верхней части груди, отводя локти вниз и назад.',yt:'https://www.youtube.com/results?search_query=тяга+верхнего+блока+техника'},{name:'Гиперэкстензия',sets:'3×15',instruction:'Зафиксируйте ноги в тренажёре. Корпус параллельно полу — исходное. Поднимайте до прямой линии с ногами, не переразгибая поясницу.',yt:'https://www.youtube.com/results?search_query=гиперэкстензия+техника'}],
+  legs: [{name:'Приседания со штангой',sets:'4×8–10',instruction:'Штанга на трапециях. Ноги чуть шире плеч, носки развёрнуты. Приседайте до параллели бёдер с полом, колени над носками, спина прямая.',yt:'https://www.youtube.com/results?search_query=приседания+со+штангой+техника'},{name:'Жим ногами',sets:'4×10–12',instruction:'Ноги на платформе на ширине плеч. Опускайте платформу до угла 90° в коленях, выжимайте без блокировки в верхней точке. Поясница прижата к сиденью.',yt:'https://www.youtube.com/results?search_query=жим+ногами+техника'},{name:'Румынская тяга',sets:'3×10–12',instruction:'Держите штангу у бёдер. Сгибайтесь в тазобедренном суставе, опуская гриф вдоль ног до ощущения растяжки в бицепсе бедра. Спина прямая.',yt:'https://www.youtube.com/results?search_query=румынская+тяга+техника'},{name:'Подъём на носки стоя',sets:'4×15–20',instruction:'Встаньте на платформу, пятки свисают. Поднимайтесь на носки максимально высоко, опускайтесь с растяжкой икры. Держитесь для равновесия.',yt:'https://www.youtube.com/results?search_query=подъём+на+носки+техника'}],
+  shoulders: [{name:'Жим гантелей сидя',sets:'4×8–10',instruction:'Сядьте, спина прямая. Гантели на уровне ушей, локти 90°. Выжмите вверх, почти соединяя руки, опустите в исходное.',yt:'https://www.youtube.com/results?search_query=жим+гантелей+сидя+плечи+техника'},{name:'Махи гантелями в стороны',sets:'3×12–15',instruction:'Стоя, гантели у бёдер. Поднимайте руки в стороны до уровня плеч с лёгким сгибом в локтях. Мизинец чуть выше большого.',yt:'https://www.youtube.com/results?search_query=махи+гантелями+в+стороны+техника'},{name:'Тяга штанги к подбородку',sets:'3×10–12',instruction:'Штанга хватом чуть уже плеч. Тяните к подбородку, ведя локти вверх и в стороны. Локти должны быть выше запястий в верхней точке.',yt:'https://www.youtube.com/results?search_query=тяга+штанги+к+подбородку+техника'},{name:'Махи гантелями в наклоне',sets:'3×12',instruction:'Наклонитесь ~45°, гантели свисают. Поднимайте руки в стороны до уровня плеч — задние пучки дельт. Контролируйте движение.',yt:'https://www.youtube.com/results?search_query=махи+гантелями+в+наклоне+задние+дельты'}],
+  arms: [{name:'Подъём штанги на бицепс',sets:'4×10–12',instruction:'Стоя, хват снизу чуть шире плеч. Сгибайте локти, поднимая штангу к плечам. Локти зафиксированы у корпуса. Медленно опускайте.',yt:'https://www.youtube.com/results?search_query=подъём+штанги+на+бицепс+техника'},{name:'Французский жим лёжа',sets:'3×10–12',instruction:'Лёжа, штанга над головой, хват узкий. Опускайте к вискам/лбу, сгибая локти. Выжмите вверх. Локти смотрят вверх, не разводятся.',yt:'https://www.youtube.com/results?search_query=французский+жим+техника'},{name:'Молотки с гантелями',sets:'3×10–12',instruction:'Гантели в нейтральном хвате (ладони друг к другу). Сгибайте поочерёдно или одновременно. Работает бицепс + брахиалис.',yt:'https://www.youtube.com/results?search_query=молотки+с+гантелями+техника'},{name:'Отжимания от скамьи на трицепс',sets:'3×12–15',instruction:'Руки на скамье позади, ноги вытянуты. Опускайтесь вниз, сгибая локти до 90°. Выжмите вверх. Тело движется вертикально.',yt:'https://www.youtube.com/results?search_query=отжимания+от+скамьи+трицепс+техника'}],
+  core: [{name:'Планка',sets:'3×45–60 сек',instruction:'Упор на предплечьях и носках. Тело — прямая линия. Не поднимать и не опускать таз. Дышите ровно. Напрягайте пресс и ягодицы.',yt:'https://www.youtube.com/results?search_query=планка+техника+правильно'},{name:'Скручивания',sets:'3×15–20',instruction:'Лёжа, колени согнуты. Поднимайте только лопатки, не отрывая поясницу. Руки за головой, не тяните шею. Выдох в точке напряжения.',yt:'https://www.youtube.com/results?search_query=скручивания+пресс+техника'},{name:'Подъём ног лёжа',sets:'3×12–15',instruction:'Лёжа, руки вдоль корпуса. Поднимайте прямые ноги до 90° и медленно опускайте, не касаясь пола. Поясница прижата к полу.',yt:'https://www.youtube.com/results?search_query=подъём+ног+лёжа+пресс+техника'},{name:'Велосипед',sets:'3×20',instruction:'Лёжа, руки за головой, ноги подняты. Тяните правый локоть к левому колену с одновременным вытягиванием правой ноги. Меняйте стороны.',yt:'https://www.youtube.com/results?search_query=упражнение+велосипед+пресс+техника'}]
+};
+
+const SPLIT_3 = [{day:1,muscle:'Грудь + Трицепс',groups:['chest','arms']},{day:2,muscle:'Спина + Бицепс',groups:['back','arms']},{day:3,muscle:'Ноги + Пресс',groups:['legs','core']}];
+const SPLIT_4 = [{day:1,muscle:'Грудь + Плечи',groups:['chest','shoulders']},{day:2,muscle:'Спина + Бицепс',groups:['back','arms']},{day:3,muscle:'Ноги',groups:['legs']},{day:4,muscle:'Плечи + Пресс',groups:['shoulders','core']}];
+const SPLIT_5 = [{day:1,muscle:'Грудь',groups:['chest']},{day:2,muscle:'Спина',groups:['back']},{day:3,muscle:'Плечи + Пресс',groups:['shoulders','core']},{day:4,muscle:'Ноги',groups:['legs']},{day:5,muscle:'Руки',groups:['arms']}];
+const SPLIT_6 = [{day:1,muscle:'Грудь',groups:['chest']},{day:2,muscle:'Спина',groups:['back']},{day:3,muscle:'Ноги',groups:['legs']},{day:4,muscle:'Плечи',groups:['shoulders']},{day:5,muscle:'Руки + Пресс',groups:['arms','core']},{day:6,muscle:'Ноги (акцент)',groups:['legs']}];
+
+const NUTRITION = { /* ОСТАВЛЕНО БЕЗ ИЗМЕНЕНИЙ ИЗ ВАШЕГО РЕФЕРЕНСА */ 
+  breakfast: {title:'Завтрак',time:'7:30–8:30',kcal:450,ingredients:[{name:'Овсянка',amount:'80 г',alts:['Гречка (80 г)','Рис (70 г)','Киноа (70 г)'],kcal:290},{name:'Яйца куриные',amount:'2 шт',alts:['Яичные белки (4 шт)','Творог 5% (100 г)','Тофу (120 г)'],kcal:140},{name:'Банан',amount:'1 шт',alts:['Яблоко (1 шт)','Апельсин (1 шт)','Груша (1 шт)'],kcal:100}],protein:28,carbs:58,fat:10},
+  snack1: {title:'Перекус',time:'10:30',kcal:200,ingredients:[{name:'Греческий йогурт',amount:'150 г',alts:['Творог 2% (150 г)','Кефир 1% (200 мл)','Айран (200 мл)'],kcal:120},{name:'Грецкие орехи',amount:'20 г',alts:['Миндаль (20 г)','Кешью (20 г)','Арахис (25 г)'],kcal:130}],protein:14,carbs:10,fat:11},
+  lunch: {title:'Обед',time:'13:00–14:00',kcal:600,ingredients:[{name:'Куриная грудка',amount:'200 г',alts:['Индейка (200 г)','Рыба (лосось 180 г)','Говядина (150 г)'],kcal:210},{name:'Рис варёный',amount:'150 г',alts:['Гречка варёная (150 г)','Булгур (130 г)','Паста твёрдых сортов (130 г)'],kcal:195},{name:'Брокколи',amount:'150 г',alts:['Стручковая фасоль (150 г)','Шпинат (200 г)','Огурец+помидор (200 г)'],kcal:50},{name:'Оливковое масло',amount:'1 ч.л.',alts:['Масло авокадо (1 ч.л.)','Льняное масло (1 ч.л.)','Масло грецкого ореха (1 ч.л.)'],kcal:45}],protein:52,carbs:60,fat:14},
+  preworkout: {title:'До тренировки',time:'16:30',kcal:250,ingredients:[{name:'Банан',amount:'1 шт',alts:['Финики (3 шт)','Хлеб цельнозерновой (2 куска)','Рисовые хлебцы (3 шт)'],kcal:100},{name:'Протеиновый коктейль',amount:'30 г',alts:['Творог 0% (150 г)','Яичные белки (4 шт)','Куриная грудка (100 г)'],kcal:120}],protein:24,carbs:28,fat:2},
+  dinner: {title:'Ужин',time:'19:00–20:00',kcal:450,ingredients:[{name:'Рыба (тунец/лосось)',amount:'200 г',alts:['Куриная грудка (200 г)','Индейка (200 г)','Яйца (3 шт)'],kcal:240},{name:'Гречка варёная',amount:'100 г',alts:['Киноа (100 г)','Чечевица (100 г)','Нут (100 г)'],kcal:110},{name:'Салатная зелень',amount:'100 г',alts:['Рукола (100 г)','Шпинат (150 г)','Микс зелени (100 г)'],kcal:20},{name:'Авокадо',amount:'½ шт',alts:['Оливки (30 г)','Орехи (15 г)','Сыр тофу (50 г)'],kcal:120}],protein:46,carbs:28,fat:18}
+};
+
+// ==================== СОСТОЯНИЕ ====================
+let state = {
+  profile: null,
+  currentWeek: 1,
+  completed: {},
+  openDays: {},
+  openInstructions: {},
+  openSwaps: {},
+  ingredients: {}
+};
+
+// ==================== LOCALSTORAGE ====================
+function saveState() {
+  localStorage.setItem('fitnessAppState', JSON.stringify(state));
+}
+
+function loadState() {
+  const saved = localStorage.getItem('fitnessAppState');
+  if (saved) {
+    state = JSON.parse(saved);
+    // если профиль есть — сразу показываем контент
+    if (state.profile) {
+      document.getElementById('workout-empty').style.display = 'none';
+      document.getElementById('workout-content').style.display = 'block';
+      document.getElementById('nutrition-empty').style.display = 'none';
+      document.getElementById('nutrition-content').style.display = 'block';
+    }
+  }
+}
+
+function resetAllData() {
+  if (confirm('Сбросить ВСЕ данные (профиль, прогресс, питание)?')) {
+    localStorage.removeItem('fitnessAppState');
+    location.reload();
+  }
+}
+
+// ==================== ОСНОВНЫЕ ФУНКЦИИ (ИЗ РЕФЕРЕНСА + ИСПРАВЛЕНИЯ) ====================
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['setup','workout','nutrition','stats'][i] === tab));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'stats' && state.profile) renderStats();
+}
+
+function validateAndGetProfile() {
+  const age = parseInt(document.getElementById('inp-age').value);
+  const height = parseInt(document.getElementById('inp-height').value);
+  const weight = parseInt(document.getElementById('inp-weight').value);
+  const freq = parseInt(document.getElementById('inp-freq').value);
+  const goal = document.getElementById('inp-goal').value;
+  const level = document.getElementById('inp-level').value;
+  const err = document.getElementById('form-error');
+  let errors = [];
+  if (!age || age < 14 || age > 80) errors.push('Возраст: допустимый диапазон 14–80 лет');
+  if (!height || height < 140 || height > 220) errors.push('Рост: допустимый диапазон 140–220 см');
+  if (!weight || weight < 40 || weight > 200) errors.push('Вес: допустимый диапазон 40–200 кг');
+  if (errors.length) {
+    err.style.display = 'block';
+    err.innerHTML = errors.join('<br>');
+    return null;
+  }
+  err.style.display = 'none';
+  const bmi = weight / ((height / 100) ** 2);
+  // Упрощённая формула Mifflin-St Jeor (как в оригинале, но с корректировкой)
+  let bmr = 10 * weight + 6.25 * height - 5 * age;
+  const adj = goal === 'cut' ? -500 : goal === 'mass' ? 300 : 100;
+  return { age, height, weight, freq, goal, level, bmi: Math.round(bmi * 10) / 10, kcal: Math.round(bmr + adj) };
+}
+
+function generatePlan() {
+  const p = validateAndGetProfile();
+  if (!p) return;
+  state.profile = p;
+  state.currentWeek = 1;
+  state.completed = {};
+  state.openDays = {};
+  state.openInstructions = {};
+  state.openSwaps = {};
+  state.ingredients = {};
+  renderWorkout();
+  renderNutrition();
+  document.getElementById('workout-empty').style.display = 'none';
+  document.getElementById('workout-content').style.display = 'block';
+  document.getElementById('nutrition-empty').style.display = 'none';
+  document.getElementById('nutrition-content').style.display = 'block';
+  switchTab('workout');
+  saveState();
+}
+
+function getSplit() {
+  const f = state.profile.freq;
+  if (f === 3) return SPLIT_3;
+  if (f === 4) return SPLIT_4;
+  if (f === 5) return SPLIT_5;
+  return SPLIT_6;
+}
+
+function getWeekDays(week) {
+  const split = getSplit();
+  const freq = state.profile.freq;
+  const scheduleMap = {3:[1,3,5],4:[1,2,4,5],5:[1,2,3,5,6],6:[1,2,3,4,5,6]};
+  const workoutDays = scheduleMap[freq];
+  const days = [];
+  for (let d = 1; d <= 7; d++) {
+    const idx = workoutDays.indexOf(d);
+    if (idx !== -1) {
+      days.push({ dayOfWeek: d, workout: split[idx % split.length] });
+    } else {
+      days.push({ dayOfWeek: d, workout: null });
+    }
+  }
+  return days;
+}
+
+const DAY_NAMES = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const goalLabels = { mass: 'Набор массы', cut: 'Похудение', strength: 'Сила и тонус' };
+const levelLabels = { beginner: 'Начинающий', intermediate: 'Средний', advanced: 'Продвинутый' };
+
+function renderWorkout() {
+  const p = state.profile;
+  if (!p) return;
+  document.getElementById('profile-chips').innerHTML = `
+    <div class="profile-chip">${p.age} лет</div>
+    <div class="profile-chip">${p.height} см</div>
+    <div class="profile-chip">${p.weight} кг</div>
+    <div class="profile-chip">ИМТ ${p.bmi}</div>
+    <div class="profile-chip">${p.freq}×/нед</div>
+    <div class="profile-chip">${goalLabels[p.goal]}</div>
+    <div class="profile-chip">${levelLabels[p.level]}</div>
+  `;
+  document.getElementById('week-label').textContent = 'Неделя ' + state.currentWeek;
+  const days = getWeekDays(state.currentWeek);
+  const container = document.getElementById('week-days');
+  container.innerHTML = '';
+  days.forEach((d) => {
+    const key = `w${state.currentWeek}d${d.dayOfWeek}`;
+    const isOpen = !!state.openDays[key];
+    const div = document.createElement('div');
+    div.className = 'workout-day';
+    if (!d.workout) {
+      div.innerHTML = `<div class="day-header"><span class="day-label">${DAY_NAMES[d.dayOfWeek-1]}</span><span class="day-muscle rest-day">Отдых</span></div>`;
+    } else {
+      const exGroups = d.workout.groups;
+      const exList = exGroups.flatMap(g => {
+        const exs = EXERCISES[g] || [];
+        return p.level === 'beginner' ? exs.slice(0, 2) : p.level === 'intermediate' ? exs.slice(0, 3) : exs;
+      });
+      const allDone = exList.every((_, ei) => state.completed[`${key}e${ei}`]);
+      div.innerHTML = `
+        <div class="day-header" onclick="toggleDay('${key}')">
+          <span class="day-label">${DAY_NAMES[d.dayOfWeek-1]}</span>
+          <span class="day-muscle">${d.workout.muscle}</span>
+          ${allDone ? '<span class="day-done">✓ Выполнено</span>' : ''}
+          <span style="color:var(--color-text-tertiary);font-size:13px">${isOpen ? '▲' : '▼'}</span>
+        </div>
+        <div class="day-body ${isOpen ? 'open' : ''}" id="body-${key}">
+          ${exList.map((ex, ei) => renderExercise(ex, key, ei)).join('')}
+        </div>
+      `;
+    }
+    container.appendChild(div);
+  });
+}
+
+function renderExercise(ex, dayKey, ei) {
+  const exKey = `${dayKey}e${ei}`;
+  const done = !!state.completed[exKey];
+  const instrOpen = !!state.openInstructions[exKey];
+  return `
+    <div class="exercise-item" id="ex-${exKey}">
+      <div class="ex-top">
+        <div class="ex-done-check ${done ? 'checked' : ''}" onclick="toggleDone('${exKey}','${dayKey}')">${done ? '✓' : ''}</div>
+        <span class="ex-name" style="${done ? 'text-decoration:line-through;color:var(--color-text-tertiary)' : ''}">${ex.name}</span>
+        <span class="ex-sets">${ex.sets}</span>
+        <button class="btn-sm" onclick="toggleInstruction('${exKey}')">Инструкция</button>
+      </div>
+      <div class="instruction-panel ${instrOpen ? 'open' : ''}" id="instr-${exKey}">
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px">${ex.instruction}</p>
+        <a href="${ex.yt}" target="_blank" class="yt-link">▶ Смотреть на YouTube</a>
+      </div>
+    </div>
+  `;
+}
+
+function toggleDay(key) {
+  state.openDays[key] = !state.openDays[key];
+  renderWorkout();
+  saveState();
+}
+
+function toggleDone(exKey, dayKey) {
+  state.completed[exKey] = !state.completed[exKey];
+  renderWorkout();
+  saveState();
+}
+
+function toggleInstruction(exKey) {
+  state.openInstructions[exKey] = !state.openInstructions[exKey];
+  renderWorkout();
+  saveState();
+}
+
+function changeWeek(dir) {
+  const newW = state.currentWeek + dir;
+  if (newW < 1 || newW > 4) return;
+  state.currentWeek = newW;
+  renderWorkout();
+  saveState();
+}
+
+function renderNutrition() {
+  const p = state.profile;
+  if (!p) return;
+  const adj = p.goal === 'cut' ? 0.85 : p.goal === 'mass' ? 1.15 : 1;
+  let totalKcal = 0;
+  Object.values(NUTRITION).forEach(m => totalKcal += Math.round(m.kcal * adj));
+  let totalP = 0, totalC = 0, totalF = 0;
+  Object.values(NUTRITION).forEach(m => { totalP += m.protein; totalC += m.carbs; totalF += m.fat; });
+  document.getElementById('day-kcal-summary').innerHTML = `Суточная норма: <strong>${totalKcal} ккал</strong> &nbsp;|&nbsp; Б: ${totalP}г &nbsp; У: ${totalC}г &nbsp; Ж: ${totalF}г`;
+  const container = document.getElementById('nutrition-meals');
+  container.innerHTML = '';
+  Object.entries(NUTRITION).forEach(([mealKey, meal]) => {
+    const div = document.createElement('div');
+    div.className = 'meal-card';
+    const ings = meal.ingredients.map((ing, ii) => {
+      const swapKey = `${mealKey}-${ii}`;
+      const current = state.ingredients[swapKey] || { name: ing.name, amount: ing.amount };
+      const isOpen = !!state.openSwaps[swapKey];
+      return `
+        <div>
+          <div class="ingredient-row">
+            <span class="ing-name">${current.name}</span>
+            <span class="ing-amount">${current.amount}</span>
+            <button class="ing-swap" onclick="toggleSwap('${swapKey}')">Заменить</button>
+          </div>
+          <div class="swap-panel ${isOpen ? 'open' : ''}" id="swap-${swapKey}">
+            ${ing.alts.map(alt => `<div class="swap-option" onclick="swapIngredient('${swapKey}','${alt}')"><span>${alt}</span></div>`).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+    div.innerHTML = `
+      <div class="meal-title">
+        <span>${meal.title}</span>
+        <span class="meal-time">${meal.time}</span>
+        <span class="meal-kcal">${Math.round(meal.kcal * adj)} ккал</span>
+      </div>
+      ${ings}
+      <div class="macros-row">
+        <div class="macro"><div class="macro-val" style="color:#378ADD">${meal.protein}г</div><div class="macro-lbl">Белки</div></div>
+        <div class="macro"><div class="macro-val" style="color:#1D9E75">${meal.carbs}г</div><div class="macro-lbl">Углеводы</div></div>
+        <div class="macro"><div class="macro-val" style="color:#D85A30">${meal.fat}г</div><div class="macro-lbl">Жиры</div></div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function toggleSwap(key) {
+  state.openSwaps[key] = !state.openSwaps[key];
+  renderNutrition();
+  saveState();
+}
+
+function swapIngredient(key, alt) {
+  const parts = alt.match(/^(.+?)\s*\((.+?)\)$/);
+  if (parts) state.ingredients[key] = { name: parts[1].trim(), amount: parts[2].trim() };
+  else state.ingredients[key] = { name: alt, amount: '' };
+  state.openSwaps[key] = false;
+  renderNutrition();
+  saveState();
+}
+
+function renderStats() {
+  if (!state.profile) return;
+  document.getElementById('stats-empty').style.display = 'none';
+  document.getElementById('stats-content').style.display = 'block';
+  const split = getSplit();
+  const totalWorkouts = state.profile.freq * 4;
+  const doneCount = Object.keys(state.completed).filter(k => state.completed[k]).length;
+  const workoutsDone = Math.min(Math.floor(doneCount / 3), totalWorkouts);
+  const pct = Math.round(workoutsDone / totalWorkouts * 100);
+
+  document.getElementById('stat-cards').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${workoutsDone}</div><div class="stat-lbl">Тренировок завершено</div></div>
+    <div class="stat-card"><div class="stat-num">${doneCount}</div><div class="stat-lbl">Упражнений выполнено</div></div>
+    <div class="stat-card"><div class="stat-num">${pct}%</div><div class="stat-lbl">Прогресс месяца</div></div>
+  `;
+
+  const weekData = [1,2,3,4].map(w => {
+    const cnt = Object.keys(state.completed).filter(k => k.startsWith(`w${w}`) && state.completed[k]).length;
+    return Math.min(cnt, state.profile.freq * 4);
+  });
+  const maxVal = Math.max(...weekData, 1);
+  document.getElementById('stat-chart').innerHTML = weekData.map((v, i) => `
+    <div class="bar-wrap">
+      <div class="bar" style="height:${Math.round(v / maxVal * 100)}px;background:${v > 0 ? '#1D9E75' : 'var(--color-border-tertiary)'}"></div>
+      <div class="bar-lbl">Нед ${i + 1}</div>
+    </div>
+  `).join('');
+
+  const scheduleMap = {3:[1,3,5],4:[1,2,4,5],5:[1,2,3,5,6],6:[1,2,3,4,5,6]};
+  const workDays = scheduleMap[state.profile.freq];
+  let calHtml = '';
+  for (let d = 1; d <= 28; d++) {
+    const week = Math.ceil(d / 7);
+    const dayOfWeek = ((d - 1) % 7) + 1;
+    const isWorkout = workDays.includes(dayOfWeek);
+    const key = `w${week}d${dayOfWeek}`;
+    const dayDone = Object.keys(state.completed).some(k => k.startsWith(key) && state.completed[k]);
+    let cls = isWorkout ? (dayDone ? 'done' : 'workout') : 'rest';
+    calHtml += `<div class="cal-day ${cls}" title="День ${d}">${d}</div>`;
+  }
+  document.getElementById('stat-cal').innerHTML = calHtml;
+  // УДАЛЕНА СТРОКА С НЕСУЩЕСТВУЮЩИМ ЭЛЕМЕНТОМ month-progress
+}
+
+// ==================== ЗАПУСК ====================
+window.onload = function() {
+  loadState();
+  // Если профиль уже сохранён — сразу рендерим
+  if (state.profile) {
+    renderWorkout();
+    renderNutrition();
+  }
+};
+</script>
+</body>
+</html>
